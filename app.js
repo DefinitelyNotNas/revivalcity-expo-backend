@@ -68,3 +68,5 @@ const init = async () => {
 };
 
 init();
+
+module.exports = { client };
