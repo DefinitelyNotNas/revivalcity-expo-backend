@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const registerSocketHandlers = require("./server/socket");
 
 // --- Database connection ---
 const client = new Pool({
@@ -49,6 +50,8 @@ io.on("connection", (socket) => {
 		console.log("User disconnected");
 	});
 });
+
+registerSocketHandlers(io); // 👈 Replace inline logic with this
 
 // --- Start Everything ---
 const PORT = process.env.PORT || 3000;
