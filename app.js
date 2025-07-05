@@ -4,7 +4,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const registerSocketHandlers = require("./server/socket");
+const registerSocketHandlers = require("./server/socket"); // ✅ Your new socket handler
 
 // --- Database connection ---
 const client = new Pool({
@@ -14,10 +14,10 @@ const client = new Pool({
 
 // --- Express App + Socket Server Setup ---
 const app = express();
-const server = http.createServer(app); // for socket.io
+const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: "*", // Replace with specific frontend domain in prod
+		origin: "*", // Use specific domain in prod
 		methods: ["GET", "POST"],
 	},
 });
@@ -29,29 +29,11 @@ app.use((req, res, next) => {
 	next();
 });
 
-// --- Your API route ---
+// --- API Routes ---
 app.use("/api", require("./server/api"));
 
-// --- Socket.IO Setup ---
-io.on("connection", (socket) => {
-	console.log(`User connected: ${socket.id}`);
-
-	socket.on("join_room", (roomId) => {
-		socket.join(roomId);
-		console.log(`User joined room: ${roomId}`);
-	});
-
-	socket.on("send_message", (messageData) => {
-		// You can insert messageData into DB here
-		io.to(messageData.room).emit("receive_message", messageData);
-	});
-
-	socket.on("disconnect", () => {
-		console.log("User disconnected");
-	});
-});
-
-registerSocketHandlers(io); // 👈 Replace inline logic with this
+// ✅ Replace it with your cleaner version
+registerSocketHandlers(io);
 
 // --- Start Everything ---
 const PORT = process.env.PORT || 3000;
