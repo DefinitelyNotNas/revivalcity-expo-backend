@@ -1,7 +1,13 @@
 const { client } = require("../../app.js");
 const uuid = require("uuid");
 
-// 1. Create a new message in a community
+/**
+ * Creates a new message in a community.
+ * @param {string} community_id - ID of the community where the message is posted.
+ * @param {string} user_id - ID of the user sending the message.
+ * @param {string} content - The content of the message.
+ * @returns {Promise<Object>} The newly created message.
+ */
 const createMessage = async (community_id, user_id, content) => {
 	try {
 		const { rows } = await client.query(
@@ -15,7 +21,11 @@ const createMessage = async (community_id, user_id, content) => {
 	}
 };
 
-// 2. Fetch all messages in a community
+/**
+ * Fetches all messages for a given community, including user info.
+ * @param {string} community_id - ID of the community.
+ * @returns {Promise<Array>} Array of messages with sender name and avatar.
+ */
 const fetchMessagesByCommunity = async (community_id) => {
 	try {
 		const { rows } = await client.query(
@@ -32,7 +42,12 @@ const fetchMessagesByCommunity = async (community_id) => {
 	}
 };
 
-// 3. Delete a message (by sender)
+/**
+ * Deletes a message by ID, only if it belongs to the given user.
+ * @param {string} message_id - ID of the message to delete.
+ * @param {string} user_id - ID of the user attempting deletion.
+ * @returns {Promise<Object>} The deleted message or null.
+ */
 const deleteMessage = async (message_id, user_id) => {
 	try {
 		const { rows } = await client.query(
@@ -46,7 +61,13 @@ const deleteMessage = async (message_id, user_id) => {
 	}
 };
 
-// 4. Edit a message (optional)
+/**
+ * Edits the content of a message if it belongs to the user.
+ * @param {string} message_id - ID of the message to edit.
+ * @param {string} user_id - ID of the user editing the message.
+ * @param {string} newContent - The new content to replace the old one.
+ * @returns {Promise<Object>} The updated message.
+ */
 const editMessage = async (message_id, user_id, newContent) => {
 	try {
 		const { rows } = await client.query(

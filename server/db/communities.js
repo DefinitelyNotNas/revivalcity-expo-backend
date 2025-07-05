@@ -1,6 +1,10 @@
 const { client } = require("../../app.js");
 const uuid = require("uuid");
 
+/**
+ * Fetches all communities from the database, ordered by newest first.
+ * @returns {Promise<Array>} Array of community records.
+ */
 const fetchAllComs = async () => {
 	try {
 		const { rows } = await client.query(
@@ -11,6 +15,13 @@ const fetchAllComs = async () => {
 		console.log(error);
 	}
 };
+
+/**
+ * Creates a new community with a name and description.
+ * @param {string} name - Name of the community.
+ * @param {string} description - Description of the community.
+ * @returns {Promise<Object>} The newly created community.
+ */
 const createCom = async (name, description) => {
 	try {
 		const { rows } = await client.query(
@@ -23,6 +34,11 @@ const createCom = async (name, description) => {
 	}
 };
 
+/**
+ * Deletes a community by its ID.
+ * @param {string} comId - Community ID to delete.
+ * @returns {Promise<Object>} Deleted community or message.
+ */
 const deleteCom = async (comId) => {
 	try {
 		const { rows } = await client.query(
@@ -38,6 +54,12 @@ const deleteCom = async (comId) => {
 	}
 };
 
+/**
+ * Removes a user from a community.
+ * @param {string} user_id - User ID.
+ * @param {string} community_id - Community ID.
+ * @returns {Promise<Object>} Message result.
+ */
 const leaveCom = async (user_id, community_id) => {
 	try {
 		const { rows } = await client.query(
@@ -58,6 +80,12 @@ const leaveCom = async (user_id, community_id) => {
 	}
 };
 
+/**
+ * Adds a user to a community if not already a member.
+ * @param {string} user_id - User ID.
+ * @param {string} community_id - Community ID.
+ * @returns {Promise<Object>} Joined row or message.
+ */
 const joinCom = async (user_id, community_id) => {
 	try {
 		// Check if user already joined
@@ -77,13 +105,18 @@ const joinCom = async (user_id, community_id) => {
 			[user_id, community_id]
 		);
 
-		return rows[0]; // return the inserted row
+		return rows[0];
 	} catch (error) {
 		console.error("Error joining community:", error);
 		throw error;
 	}
 };
 
+/**
+ * Fetches all members of a specific community.
+ * @param {string} comId - Community ID.
+ * @returns {Promise<Array>} Array of members.
+ */
 const fetchComMembers = async (comId) => {
 	try {
 		const { rows } = await client.query(
@@ -96,6 +129,11 @@ const fetchComMembers = async (comId) => {
 	}
 };
 
+/**
+ * Fetches a single community by ID.
+ * @param {string} comId - Community ID.
+ * @returns {Promise<Object>} Community data.
+ */
 const fetchSingleCom = async (comId) => {
 	try {
 		const { rows } = await client.query(
@@ -108,10 +146,16 @@ const fetchSingleCom = async (comId) => {
 	}
 };
 
+/**
+ * Checks if a user is in a specific community.
+ * @param {string} user_id - User ID.
+ * @param {string} comId - Community ID.
+ * @returns {Promise<boolean>} True if user is in community, false otherwise.
+ */
 const isUserInCom = async (user_id, comId) => {
 	try {
 		const { rows } = await client.query(
-			`SELECT 1 FROM community_members WHERE user_id = $1 AND community_id = $2);`,
+			`SELECT 1 FROM community_members WHERE user_id = $1 AND community_id = $2`,
 			[user_id, comId]
 		);
 		return rows.length > 0;
@@ -121,24 +165,25 @@ const isUserInCom = async (user_id, comId) => {
 	}
 };
 
+/**
+ * Fetches all communities a user is part of.
+ * @param {string} user_id - User ID.
+ * @returns {Promise<Array>} Array of communities.
+ */
 const fetchUserComs = async (user_id) => {
 	try {
 		const { rows } = await client.query(
 			`SELECT c.* 
             FROM communities c
             JOIN community_members cm ON c.id = cm.community_id
-            WHERE cm.user_id = $1;
-            `,
+            WHERE cm.user_id = $1;`,
 			[user_id]
 		);
 		return rows;
-	} catch (error) {}
+	} catch (error) {
+		console.log(error);
+	}
 };
-
-//Pending
-/* 
-- Update Community
- */
 
 module.exports = {
 	fetchAllComs,

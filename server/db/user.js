@@ -1,7 +1,18 @@
 const { client } = require("../../app.js");
 const uuid = require("uuid");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-// - create user
+/**
+ * Creates a new user in the database.
+ * @param {string} name - User's name.
+ * @param {string} email - User's email.
+ * @param {string} phone - User's phone number.
+ * @param {string} avatar_url - Avatar image URL.
+ * @param {string} role - User role (e.g. "admin", "member").
+ * @param {string} user_stage - User's stage (e.g. "new", "active").
+ * @returns {Promise<Object>} The created user.
+ */
 const createUser = async (
 	name,
 	email,
@@ -22,7 +33,11 @@ const createUser = async (
 	}
 };
 
-// - delete user
+/**
+ * Deletes a user by ID.
+ * @param {string} userId - ID of the user to delete.
+ * @returns {Promise<Object>} The deleted user.
+ */
 const deleteUser = async (userId) => {
 	try {
 		const { rows } = await client.query(
@@ -35,7 +50,12 @@ const deleteUser = async (userId) => {
 	}
 };
 
-// - edit user (update any user field dynamically)
+/**
+ * Edits a user with provided fields.
+ * @param {string} userId - ID of the user to update.
+ * @param {Object} updates - Key-value pairs of fields to update.
+ * @returns {Promise<Object>} The updated user.
+ */
 const editUser = async (userId, updates) => {
 	try {
 		const keys = Object.keys(updates);
@@ -54,7 +74,12 @@ const editUser = async (userId, updates) => {
 	}
 };
 
-// - set user role
+/**
+ * Sets the user's role.
+ * @param {string} userId - ID of the user.
+ * @param {string} role - New role to assign.
+ * @returns {Promise<Object>} The updated user.
+ */
 const setUserRole = async (userId, role) => {
 	try {
 		const { rows } = await client.query(
@@ -67,7 +92,12 @@ const setUserRole = async (userId, role) => {
 	}
 };
 
-// - set user stage
+/**
+ * Sets the user's stage.
+ * @param {string} userId - ID of the user.
+ * @param {string} user_stage - New stage to assign.
+ * @returns {Promise<Object>} The updated user.
+ */
 const setUserFunction = async (userId, user_stage) => {
 	try {
 		const { rows } = await client.query(
@@ -80,7 +110,11 @@ const setUserFunction = async (userId, user_stage) => {
 	}
 };
 
-// - fetch user by ID
+/**
+ * Fetches a user by their ID.
+ * @param {string} userId - ID of the user.
+ * @returns {Promise<Object>} The user record.
+ */
 const fetchUserById = async (userId) => {
 	try {
 		const { rows } = await client.query(
@@ -93,7 +127,11 @@ const fetchUserById = async (userId) => {
 	}
 };
 
-// - fetch user by name
+/**
+ * Fetches users by name (case-insensitive partial match).
+ * @param {string} name - Name to search.
+ * @returns {Promise<Array>} Array of matching users.
+ */
 const fetchUserByName = async (name) => {
 	try {
 		const { rows } = await client.query(
@@ -106,7 +144,10 @@ const fetchUserByName = async (name) => {
 	}
 };
 
-// - fetch all users
+/**
+ * Fetches all users in the system.
+ * @returns {Promise<Array>} List of all users.
+ */
 const fetchAllUsers = async () => {
 	try {
 		const { rows } = await client.query(
@@ -118,6 +159,42 @@ const fetchAllUsers = async () => {
 	}
 };
 
+/**
+ * Checks if a user exists by username.
+ * @param {string} username - Username to check.
+ * @returns {Promise<boolean>} True if user exists, false otherwise.
+ */
+const userExists = async (username) => {
+	const SQL = `SELECT id FROM users WHERE username = $1;`;
+	const response = await client.query(SQL, [username]);
+	return response.rows.length > 0;
+};
+
+/**
+ * Authenticates a user by username and password.
+ * @param {Object} credentials - Object with `username` and `password`.
+ * @returns {Promise<Object>} JWT token object on success.
+ * @throws {Error} If user not found or password is incorrect.
+ */
+const authenticate = async ({ username, password }) => {
+	const SQL = `SELECT id, password, email, role FROM users WHERE username = $1;`;
+	const response = await client.query(SQL, [username]);
+
+	if (!response.rows.length) throw new Error("User not found");
+	const user = response.rows[0];
+	if (!user.password) throw new Error("User password not defined");
+
+	const passwordMatch = await bcrypt.compare(password, user.password);
+	if (!passwordMatch) throw new Error("Incorrect password");
+
+	const myToken = jwt.sign(
+		{ id: user.id, role: user.role },
+		process.env.JWT_SECRET
+	);
+
+	return { token: myToken };
+};
+
 module.exports = {
 	createUser,
 	deleteUser,
@@ -127,4 +204,6 @@ module.exports = {
 	fetchUserById,
 	fetchUserByName,
 	fetchAllUsers,
+	authenticate,
+	userExists,
 };

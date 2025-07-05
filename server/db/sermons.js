@@ -1,7 +1,19 @@
 const { client } = require("../../app.js");
 const uuid = require("uuid");
 
-// - Add sermon
+/**
+ * Creates a new sermon entry.
+ * @param {string} title - Title of the sermon.
+ * @param {string} speaker - Speaker name.
+ * @param {string} date - Date of the sermon.
+ * @param {string} video_url - URL of the sermon video.
+ * @param {string} audio_url - URL of the sermon audio.
+ * @param {string} series_name - Name of the sermon series.
+ * @param {string} description - Description of the sermon.
+ * @param {string} type - Type/category of the sermon.
+ * @param {string} topic - Topic of the sermon.
+ * @returns {Promise<Object>} The newly created sermon.
+ */
 const createSermon = async (
 	title,
 	speaker,
@@ -46,7 +58,11 @@ const createSermon = async (
 	}
 };
 
-// - Remove sermon
+/**
+ * Deletes a sermon by its ID.
+ * @param {string} sermonId - ID of the sermon to delete.
+ * @returns {Promise<Object>} The deleted sermon.
+ */
 const deleteSermon = async (sermonId) => {
 	try {
 		const { rows } = await client.query(
@@ -59,7 +75,10 @@ const deleteSermon = async (sermonId) => {
 	}
 };
 
-// - Fetch all sermons
+/**
+ * Fetches all sermons, ordered by date (newest first).
+ * @returns {Promise<Array>} List of all sermons.
+ */
 const fetchAllSermons = async () => {
 	try {
 		const { rows } = await client.query(
@@ -71,7 +90,11 @@ const fetchAllSermons = async () => {
 	}
 };
 
-// - Fetch sermon by speaker
+/**
+ * Fetches sermons filtered by speaker name.
+ * @param {string} speaker - Speaker name to search for.
+ * @returns {Promise<Array>} List of sermons matching the speaker.
+ */
 const fetchSermonsBySpeaker = async (speaker) => {
 	try {
 		const { rows } = await client.query(
@@ -84,7 +107,11 @@ const fetchSermonsBySpeaker = async (speaker) => {
 	}
 };
 
-// - Fetch sermon by type
+/**
+ * Fetches sermons by sermon type/category.
+ * @param {string} type - Type/category of sermon.
+ * @returns {Promise<Array>} List of sermons matching the type.
+ */
 const fetchSermonsByType = async (type) => {
 	try {
 		const { rows } = await client.query(
@@ -97,7 +124,11 @@ const fetchSermonsByType = async (type) => {
 	}
 };
 
-// - Fetch sermon by topic
+/**
+ * Fetches sermons by topic.
+ * @param {string} topic - Topic string to search for.
+ * @returns {Promise<Array>} List of sermons matching the topic.
+ */
 const fetchSermonsByTopic = async (topic) => {
 	try {
 		const { rows } = await client.query(
@@ -110,7 +141,11 @@ const fetchSermonsByTopic = async (topic) => {
 	}
 };
 
-// - Fetch sermons by series
+/**
+ * Fetches sermons by series name.
+ * @param {string} series - Series name to search for.
+ * @returns {Promise<Array>} List of sermons in the series.
+ */
 const fetchSermonsBySeries = async (series) => {
 	try {
 		const { rows } = await client.query(
@@ -123,7 +158,11 @@ const fetchSermonsBySeries = async (series) => {
 	}
 };
 
-// - Fetch sermon by ID
+/**
+ * Fetches a single sermon by ID.
+ * @param {string} sermonId - ID of the sermon.
+ * @returns {Promise<Object>} The sermon record.
+ */
 const fetchSermonById = async (sermonId) => {
 	try {
 		const { rows } = await client.query(
@@ -136,7 +175,11 @@ const fetchSermonById = async (sermonId) => {
 	}
 };
 
-// - Fetch sermon by query (search across multiple fields)
+/**
+ * Searches sermons by a query string across title, speaker, topic, and series name.
+ * @param {string} query - Search string.
+ * @returns {Promise<Array>} List of matching sermons.
+ */
 const fetchSermonByQuery = async (query) => {
 	try {
 		const { rows } = await client.query(
@@ -154,7 +197,10 @@ const fetchSermonByQuery = async (query) => {
 	}
 };
 
-// - Fetch recent sermons (e.g., last 5 sermons)
+/**
+ * Fetches the 5 most recent sermons.
+ * @returns {Promise<Array>} Array of the 5 latest sermons.
+ */
 const fetchRecentSermons = async () => {
 	try {
 		const { rows } = await client.query(
@@ -166,7 +212,10 @@ const fetchRecentSermons = async () => {
 	}
 };
 
-// - Fetch all unique series names
+/**
+ * Fetches all distinct sermon series names.
+ * @returns {Promise<Array<string>>} Array of unique series names.
+ */
 const fetchAllSeries = async () => {
 	try {
 		const { rows } = await client.query(

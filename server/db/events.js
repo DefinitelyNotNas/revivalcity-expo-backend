@@ -1,6 +1,10 @@
 const { client } = require("../../app.js");
 const uuid = require("uuid");
 
+/**
+ * Fetches all events from the database.
+ * @returns {Promise<Array>} Array of all event records.
+ */
 const fetchAllEvents = async () => {
 	try {
 		const { rows } = await client.query(`SELECT * FROM events;`);
@@ -10,6 +14,14 @@ const fetchAllEvents = async () => {
 	}
 };
 
+/**
+ * Adds a new event to the database.
+ * @param {string} title - Title of the event.
+ * @param {string} description - Description of the event.
+ * @param {string} location - Location of the event.
+ * @param {string} image_url - Image URL for the event.
+ * @returns {Promise<Object>} The newly created event.
+ */
 const addEvent = async (title, description, location, image_url) => {
 	try {
 		const { rows } = await client.query(
@@ -22,6 +34,11 @@ const addEvent = async (title, description, location, image_url) => {
 	}
 };
 
+/**
+ * Deletes an event by its ID.
+ * @param {string} eventId - The ID of the event to delete.
+ * @returns {Promise<Object>} The deleted event.
+ */
 const deleteEvent = async (eventId) => {
 	try {
 		const { rows } = await client.query(
@@ -34,6 +51,11 @@ const deleteEvent = async (eventId) => {
 	}
 };
 
+/**
+ * Retrieves a single event by its ID.
+ * @param {string} eventId - The ID of the event.
+ * @returns {Promise<Object>} The event object.
+ */
 const getEventById = async (eventId) => {
 	try {
 		const { rows } = await client.query(
@@ -46,6 +68,10 @@ const getEventById = async (eventId) => {
 	}
 };
 
+/**
+ * Fetches upcoming events where the event date is today or later.
+ * @returns {Promise<Array>} Array of upcoming events.
+ */
 const fetchUpcomingEvents = async () => {
 	try {
 		const { rows } = await client.query(
@@ -57,6 +83,13 @@ const fetchUpcomingEvents = async () => {
 	}
 };
 
+/**
+ * Registers a user for an event. Increments attendance count.
+ * Avoids duplicate registrations using ON CONFLICT.
+ * @param {string} userId - The ID of the user registering.
+ * @param {string} eventId - The ID of the event.
+ * @returns {Promise<Object>} Success confirmation object.
+ */
 const registerForEvent = async (userId, eventId) => {
 	try {
 		await client.query("BEGIN");
