@@ -77,7 +77,7 @@ router.get("/me", verifyToken, async (req, res, next) => {
 	try {
 		const SQL = `SELECT id, name, email FROM users WHERE id = $1
         `;
-		const user = await client.query(SQL, [req.user.id]);
+		const user = await client.query(SQL, [req.userId]);
 		res.json(user.rows[0]);
 	} catch (err) {
 		console.error("Error fetching user", err.message);

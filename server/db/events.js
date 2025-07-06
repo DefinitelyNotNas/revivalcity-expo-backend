@@ -20,13 +20,20 @@ const fetchAllEvents = async () => {
  * @param {string} description - Description of the event.
  * @param {string} location - Location of the event.
  * @param {string} image_url - Image URL for the event.
+ * @param {string} date - date for the event.
  * @returns {Promise<Object>} The newly created event.
  */
-const addEvent = async (title, description, location, image_url) => {
+const addEvent = async (
+	title,
+	description,
+	location,
+	image_url,
+	date
+) => {
 	try {
 		const { rows } = await client.query(
-			`INSERT INTO events(id, title, description, location, image_url) VALUES($1, $2, $3, $4, $5) RETURNING *;`,
-			[uuid.v4(), title, description, location, image_url]
+			`INSERT INTO events(id, title, description, location, image_url, event_date) VALUES($1, $2, $3, $4, $5, $6) RETURNING *;`,
+			[uuid.v4(), title, description, location, image_url, date]
 		);
 		return rows[0];
 	} catch (error) {
