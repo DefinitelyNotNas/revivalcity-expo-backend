@@ -4,7 +4,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const registerSocketHandlers = require("./server/socket"); // ✅ Your new socket handler
+const registerSocketHandlers = require("./socket"); // ✅ Your new socket handler
 
 // --- Database connection ---
 const client = new Pool({
