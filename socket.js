@@ -1,7 +1,7 @@
 const {
 	createMessage,
 	fetchMessagesByCommunity,
-} = require("./db/messageFunctions");
+} = require("./server/db/messages");
 
 function registerSocketHandlers(io) {
 	io.on("connection", (socket) => {

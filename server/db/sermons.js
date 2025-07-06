@@ -1,4 +1,4 @@
-const { client } = require("../../app.js");
+const { client } = require("./index");
 const uuid = require("uuid");
 
 /**

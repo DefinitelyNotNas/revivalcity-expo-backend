@@ -7,10 +7,7 @@ const cors = require("cors");
 const registerSocketHandlers = require("./socket"); // ✅ Your new socket handler
 
 // --- Database connection ---
-const client = new Pool({
-	connectionString: process.env.DATABASE_URL,
-	ssl: { rejectUnauthorized: false },
-});
+const client = require("./server/db");
 
 // --- Express App + Socket Server Setup ---
 const app = express();
@@ -54,4 +51,3 @@ const init = async () => {
 
 init();
 
-module.exports = { client };

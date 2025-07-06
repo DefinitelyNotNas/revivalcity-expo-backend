@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const { verifyToken } = require("./middlewares");
+
 const {
 	createSermon, //post
 	deleteSermon, //delete
