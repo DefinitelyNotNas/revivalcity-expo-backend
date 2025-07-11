@@ -4,7 +4,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const registerSocketHandlers = require("./socket"); // ✅ Your new socket handler
+const registerSocketHandlers = require("./socket");
 
 // --- Database connection ---
 const client = require("./server/db");
@@ -14,12 +14,28 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: "*", // Use specific domain in prod
-		methods: ["GET", "POST"],
+		origin: [
+			"http://localhost:5173",
+			"https://rcitysermonupload.netlify.app",
+		],
+		methods: ["GET", "POST", "PUT", "DELETE"],
+		allowedHeaders: ["Content-Type", "Authorization"],
 	},
 });
 
-app.use(cors());
+// --- CORS Middleware ---
+app.use(
+	cors({
+		origin: [
+			"http://localhost:5173",
+			"https://rcitysermonupload.netlify.app",
+		],
+		methods: ["GET", "POST", "PUT", "DELETE"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+	})
+);
+
+// --- JSON Parsing & Logging ---
 app.use(express.json());
 app.use((req, res, next) => {
 	console.log(`${req.method} ${req.url}`);
@@ -29,10 +45,10 @@ app.use((req, res, next) => {
 // --- API Routes ---
 app.use("/api", require("./server/api"));
 
-// ✅ Replace it with your cleaner version
+// --- Register Socket.IO Events ---
 registerSocketHandlers(io);
 
-// --- Start Everything ---
+// --- Start Server ---
 const PORT = process.env.PORT || 3000;
 
 const init = async () => {
@@ -50,4 +66,3 @@ const init = async () => {
 };
 
 init();
-
