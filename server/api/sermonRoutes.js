@@ -17,15 +17,39 @@ const {
 	fetchAllSeries, // get
 } = require("../db/sermons");
 
-router.post("/create", verifyToken, async (req, res, next) => {
+router.post("/create", async (req, res, next) => {
 	try {
-		const response = await createSermon();
+		const {
+			title,
+			speaker,
+			topic,
+			video_url,
+			audio_url,
+			series_name,
+			description,
+			sermon_type,
+			bunny_id,
+			thumbnail_url,
+		} = req.body;
+
+		const response = await createSermon(
+			title,
+			speaker,
+			topic,
+			video_url,
+			audio_url,
+			series_name,
+			description,
+			sermon_type,
+			bunny_id,
+			thumbnail_url
+		);
+
 		res.status(200).send(response);
 	} catch (error) {
 		next(error);
 	}
 });
-
 router.delete("/delete/:id", verifyToken, async (req, res, next) => {
 	try {
 		const response = await deleteSermon();
